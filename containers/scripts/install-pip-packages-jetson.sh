@@ -30,4 +30,7 @@ pip3 install -U --no-cache-dir --verbose jetson-stats numpy onnx ultralytics arg
 pip3 show numpy && python3 -c 'import numpy; print(numpy.__version__)'
 pip3 show onnx && python3 -c 'import onnx; print(onnx.__version__)'
 
-apt-get install -y --no-install-recommends ros-humble-cv-bridge
+apt update && apt upgrade -y
+apt-get install -y --no-install-recommends ros-humble-cv-bridge sudo
+apt-get clean
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

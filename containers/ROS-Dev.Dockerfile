@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY ./scripts /scripts
 
-RUN dos2unix /scripts/*.sh
+RUN dos2unix /scripts/*.sh && python3 -m pip install --upgrade pip
 
 RUN /scripts/install-build-essential.sh
 RUN /scripts/install-cmake.sh

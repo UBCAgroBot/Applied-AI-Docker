@@ -21,7 +21,16 @@ apt-get install -y --no-install-recommends \
     unzip \
     time \
     sshpass \
-    ssh-client
+    ssh-client \
+    plocate \
+    libboost-all-dev \
+    xz-utils \
+    libnss3-tools \
+    libx11-dev \
+    xauth \
+    apt-utils \
+    dialog
+
 apt-get clean 
 rm -rf /var/lib/apt/lists/* 
 gcc --version 

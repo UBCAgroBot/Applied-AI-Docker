@@ -5,6 +5,7 @@ echo 'installing ros2'
 
 locale-gen en_US en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
+apt update && apt upgrade -y
 apt-get update
 apt-get install -y --no-install-recommends \
 		gnupg2 \
