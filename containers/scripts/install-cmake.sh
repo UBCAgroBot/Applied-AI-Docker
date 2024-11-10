@@ -10,6 +10,6 @@ rm /usr/share/keyrings/kitware-archive-keyring.gpg
 apt-get install -y --no-install-recommends kitware-archive-keyring 
 apt-cache policy cmake 
 apt-get install -y --no-install-recommends cmake 
-rm -rf /var/lib/apt/lists/* 
-apt-get clean
+apt-get clean 
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 cmake --version

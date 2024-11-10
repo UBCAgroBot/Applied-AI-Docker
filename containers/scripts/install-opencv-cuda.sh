@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 version="4.10.0"
 folder="workspace"
@@ -17,6 +17,7 @@ apt-get install -y curl
 echo "------------------------------------"
 echo "** Download opencv "${version}" (2/4)"
 echo "------------------------------------"
+cd /tmp/
 mkdir $folder
 cd ${folder}
 curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip
@@ -44,3 +45,6 @@ source ~/.bashrc
 
 echo "Verify installed version"
 python3 -c "import cv2; print('OpenCV version:', str(cv2.__version__)); print(cv2.getBuildInformation())"
+
+apt-get clean 
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

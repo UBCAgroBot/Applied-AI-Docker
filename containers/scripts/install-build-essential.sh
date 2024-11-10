@@ -3,7 +3,7 @@ set -ex
 
 echo 'installing build-essential'
 
-apt -y update && apt -y upgrade
+apt-get update -y && apt-get upgrade -y
 apt-get install -y --no-install-recommends \
     sudo \
     build-essential \
@@ -35,10 +35,6 @@ apt-get install -y --no-install-recommends \
     python3-pip \
     python3-dev \
     python3-venv
-# python is new
-    # python3.10 \
-
-# python3-something module?
 
 apt-get clean 
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

@@ -1,14 +1,14 @@
 {
     "name": "Jetson Development Container",
-    "remoteUser": "vscode",
+    "remoteUser": "root",
     "image": "agrobotappliedai/jetsoncontainers-dev:latest",
     "customizations":{
         "settings": {
             "terminal.integrated.shell.linux": "bash"
         }
     },
-    "workspaceFolder": "/home/vscode/workspace",
-    "workspaceMount": "source=.,target=/home/vscode/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/home/user/workspace",
+    "workspaceMount": "source=.,target=/home/user/workspace,type=bind,consistency=cached",
     "mounts": [],
     "runArgs": [
         "--net=host",

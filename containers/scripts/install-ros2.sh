@@ -5,7 +5,7 @@ echo 'installing ros2'
 
 locale-gen en_US en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-apt update && apt upgrade -y
+apt-get update -y && apt upgrade -y
 apt-get update
 apt-get install -y --no-install-recommends \
 	gnupg2 \
@@ -29,6 +29,6 @@ apt-get install -y --no-install-recommends \
 	python3-rosdep \
 	ros-humble-cv-bridge
 
-rm -rf /var/lib/apt/lists/*
-apt-get clean
-sudo rosdep init && sudo rosdep update
+rosdep init && rosdep update
+apt-get clean 
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
