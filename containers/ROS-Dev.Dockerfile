@@ -1,52 +1,37 @@
-FROM ubuntu:22.04
-
+FROM nvcr.io/nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y \
-    sudo \
-    python3.10 \
-    dos2unix \
-    git \
-    python3-pip \
-    xauth \
-    apt-utils \
-    dialog \
-    libnss3-tools \
-    libx11-dev \
-    git \
-    xz-utils \
-    zip \
-    unzip \
-    && apt clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 COPY ./scripts /scripts
+RUN apt-get update && apt-get install -y dos2unix
 
-RUN dos2unix /scripts/*.sh && python3 -m pip install --upgrade pip
-
+FROM base AS ros2
+RUN dos2unix /scripts/*.sh
 RUN /scripts/install-build-essential.sh
 RUN /scripts/install-cmake.sh
 RUN /scripts/install-ros2.sh
 
-ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+FROM ros2 AS zed-sdk
+RUN /scripts/install-zed-sdk.sh
 
-# Create and switch to user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME --shell /bin/bash \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+FROM zed-sdk AS opencv-cuda
+RUN /scripts/install-opencv-cuda.sh
 
-# Set the default user to vscode
-USER $USERNAME
-
+FROM opencv-cuda AS pip-packages
+# run the normal pip packages
+ENV PIP_DEFAULT_TIMEOUT=100
 RUN python3 -m pip install --upgrade pip
+RUN pip3 install --no-cache-dir --verbose --ignore-installed blinker
+RUN pip3 install --no-cache-dir --verbose \
+    flask \
+    numpy \
+    cupy-cuda12x \
+    tqdm
 
-# Create workspace so that user own this directory
-RUN mkdir -p /home/$USERNAME/workspace
-WORKDIR /home/$USERNAME/workspace
-
+FROM pip-packages AS final
+ENV PYTHONPATH="/usr/local/lib/python3.10/dist-packages"
 ENV LANG=en_US.UTF-8
+
+RUN mkdir -p /home/user/workspace
+WORKDIR /home/user/workspace
 
 ENTRYPOINT ["/bin/bash"]

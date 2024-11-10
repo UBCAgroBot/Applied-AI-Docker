@@ -24,7 +24,6 @@ apt-get install -y --no-install-recommends \
     sshpass \
     ssh-client \
     plocate \
-    libboost-all-dev \
     xz-utils \
     libnss3-tools \
     libx11-dev \
