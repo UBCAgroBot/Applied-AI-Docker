@@ -13,6 +13,8 @@ docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ ros-
 # Running: 
 ```
 docker run -it --rm --gpus all -v ~/Downloads:/home/usr/Downloads agrobotappliedai/ros-containers:latest --network=host
+
+docker run -it --rm --gpus all test --network=host
 ```
 
 example:

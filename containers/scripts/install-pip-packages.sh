@@ -5,7 +5,7 @@ echo 'Installing CUDA supported python packages'
 
 export PIP_DEFAULT_TIMEOUT=100
 
-pip3 install --no-cache-dir --verbose \
+pip3 install --user --no-cache-dir --verbose \
     torch \
     torchvision \
     numpy \
@@ -14,11 +14,8 @@ pip3 install --no-cache-dir --verbose \
     matplotlib \
     onnx \
     onnxruntime-gpu \
+    ultralytics \
     cupy-cuda12x \
-    pycuda \
-    ultralytics
+    flask
 
-apt update && apt upgrade -y
-apt-get install -y --no-install-recommends sudo
-apt-get clean
-rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+pip3 install --upgrade pycuda

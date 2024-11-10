@@ -17,7 +17,8 @@
         "-e NVIDIA_DRIVER_CAPABILITIES=all",
         "--ipc=host",
         "--ulimit=memlock=-1",
-        "--ulimit=stack=67108864"
+        "--ulimit=stack=67108864",
+        "--privileged"
     ],
     "postStartCommand": "bash -c 'sudo apt update && sudo apt upgrade -y'"
 }

@@ -8,11 +8,11 @@ locale-gen en_US en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-
 apt update && apt upgrade -y
 apt-get update
 apt-get install -y --no-install-recommends \
-		gnupg2 \
-		lsb-release \
-		ca-certificates \
-		locales \
-		software-properties-common \
+	gnupg2 \
+	lsb-release \
+	ca-certificates \
+	locales \
+	software-properties-common \
 
 add-apt-repository universe
 curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
@@ -24,6 +24,11 @@ source /opt/ros/humble/setup.bash
 printenv | grep -i ROS
 
 apt-get install -y --no-install-recommends \
+	ros-humble-rosbridge-suite \
+	python3-serial \
+	python3-rosdep \
+	ros-humble-cv-bridge
 
 rm -rf /var/lib/apt/lists/*
 apt-get clean
+sudo rosdep init && sudo rosdep update

@@ -3,6 +3,8 @@ set -ex
 
 echo 'installing GPU packages'
 
+# jtop?
+
 apt-get install -y --no-install-recommends libboost-all-dev
 
 echo 'export CPATH=$CPATH:/usr/local/cuda-12.2/targets/aarch64-linux/include' >> ~/.bashrc
@@ -11,6 +13,9 @@ echo 'export PATH=$PATH:/usr/local/cuda-12.2/bin' >> ~/.bashrc
 echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-12.2/lib64' >> ~/.bashrc
 # echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
 # echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc
+
+# use index url flag instead of wget
+# should make conditional extra urls on top of base pip package install...
 
 wget "http://jetson.webredirect.org/jp6/cu122/+f/54d/5094104195427/onnxruntime_gpu-1.17.0-cp310-cp310-linux_aarch64.whl#sha256=54d509410419542764627aebf6542734a7c5b4d260ad0860b650e05f38b1b47a"
 wget "http://jetson.webredirect.org/jp6/cu122/+f/9aa/972ec292a04c6/opencv_contrib_python-4.10.0+6a181ce-cp310-cp310-linux_aarch64.whl#sha256=9aa972ec292a04c63b1106d042098d2026ad898daa8ca2860754c96a0bb3abfe"

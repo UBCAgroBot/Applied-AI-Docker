@@ -5,6 +5,7 @@ echo 'installing build-essential'
 
 apt -y update && apt -y upgrade
 apt-get install -y --no-install-recommends \
+    sudo \
     build-essential \
     software-properties-common \
     apt-transport-https \
@@ -29,9 +30,17 @@ apt-get install -y --no-install-recommends \
     libx11-dev \
     xauth \
     apt-utils \
-    dialog
+    dialog \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv
+# python is new
+    # python3.10 \
+
+# python3-something module?
 
 apt-get clean 
-rm -rf /var/lib/apt/lists/* 
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 gcc --version 
 g++ --version
