@@ -28,3 +28,6 @@ This command will run the container in interactive mode and remove it once you e
 ## Running the container with a volume
 
 (confluence guides)
+
+need to modify the scripts to add conditional arguments for diff results
+./desktop_build_dockerfile_from_sdk_ubuntu_and_cuda_version.sh <Ubuntu version> <CUDA version> <ZED SDK version>
