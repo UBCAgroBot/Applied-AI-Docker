@@ -5,7 +5,7 @@ echo 'installing ros2'
 
 locale-gen en_US en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-apt-get update -y && apt upgrade -y
+apt-get update -y && apt-get upgrade -y
 apt-get update
 apt-get install -y --no-install-recommends \
 	gnupg2 \
@@ -17,8 +17,8 @@ apt-get install -y --no-install-recommends \
 add-apt-repository universe
 curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
-apt-get update && apt upgrade -y
-apt install ros-humble-ros-base python3-argcomplete ros-dev-tools -y
+apt-get update && apt-get upgrade -y
+apt-get install ros-humble-ros-base python3-argcomplete ros-dev-tools -y
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 source /opt/ros/humble/setup.bash
 printenv | grep -i ROS
