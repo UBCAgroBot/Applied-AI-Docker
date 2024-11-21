@@ -15,13 +15,13 @@ RUN /scripts/install-ros2.sh
 FROM ros2 AS zed-sdk
 RUN /scripts/install-zed-sdk-jetson.sh
 
-FROM zed-sdk AS opencv-cuda
-RUN /scripts/install-opencv-cuda-jetson.sh
+# FROM zed-sdk AS opencv-cuda
+# RUN /scripts/install-opencv-cuda-jetson.sh
 
-FROM opencv-cuda AS pip-packages
-RUN /scripts/install-pip-packages-jetson.sh
+# FROM opencv-cuda AS pip-packages
+# RUN /scripts/install-pip-packages-jetson.sh
 
-FROM pip-packages AS final
+# FROM pip-packages AS final
 ENV PYTHONPATH="/usr/local/lib/python3.10/dist-packages"
 ENV LANG=en_US.UTF-8
 
