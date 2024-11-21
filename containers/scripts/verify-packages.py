@@ -178,7 +178,7 @@ def check_ros2():
 
         # Check ROS 2 installation
         print("Sourcing ROS 2 environment...")
-        subprocess.check_call(f"source {ros2_setup_script} && ros2 --version", shell=True, executable="/bin/bash")
+        subprocess.check_call(f"ros2 doctor", shell=True, executable="/bin/bash")
 
         # Run a basic ROS 2 command to list nodes
         print("Testing ROS 2 functionality...")
