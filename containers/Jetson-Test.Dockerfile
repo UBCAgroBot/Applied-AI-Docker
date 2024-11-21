@@ -15,6 +15,5 @@ ENV LANG=en_US.UTF-8
 
 RUN mkdir -p /home/user/workspace
 WORKDIR /home/user/workspace
-RUN source /opt/ros/humble/setup.bash && ros2 doctor
 
 ENTRYPOINT ["/bin/bash"]
