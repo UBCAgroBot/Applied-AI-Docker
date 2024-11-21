@@ -32,16 +32,6 @@ pip3 install --trusted-host jetson.webredirect.org --verbose \
     flask \
     tqdm
 
-# pip3 install --index-url http://jetson.webredirect.org/jp6/cu122 onnxruntime-gpu --trusted-host jetson.webredirect.org
-# pip3 install --index-url http://jetson.webredirect.org/jp6/cu122 pycuda --trusted-host jetson.webredirect.org
-# pip3 install --index-url http://jetson.webredirect.org/jp6/cu122 torch --trusted-host jetson.webredirect.org
-# pip3 install --index-url http://jetson.webredirect.org/jp6/cu122 torchvision --trusted-host jetson.webredirect.org
-# pip3 install --index-url http://jetson.webredirect.org/jp6/cu122 cupy --trusted-host jetson.webredirect.org
-
-# pip3 install --no-cache-dir --verbose numpy scipy scikit-learn matplotlib 
-
-# onnx ultralytics argparse tqdm flask
-
 apt-get update && apt-get upgrade -y
 apt-get clean
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

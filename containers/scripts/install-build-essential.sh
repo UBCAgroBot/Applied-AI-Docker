@@ -33,7 +33,8 @@ apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-dev \
-    python3-venv
+    python3-venv \
+    locales
 
 apt-get clean 
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
