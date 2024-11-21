@@ -35,3 +35,4 @@ apt-get install -y --no-install-recommends \
 rosdep init && rosdep update
 apt-get clean 
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ros2 doctor
