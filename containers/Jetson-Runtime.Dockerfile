@@ -22,7 +22,7 @@ FROM opencv-cuda AS pip-packages
 RUN /scripts/install-pip-packages-jetson.sh
 
 FROM pip-packages AS final
-ENV PYTHONPATH="/usr/local/lib/python3.10/dist-packages"
+ENV PYTHONPATH="/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages"
 ENV LANG=en_US.UTF-8
 
 RUN mkdir -p /home/user/workspace
