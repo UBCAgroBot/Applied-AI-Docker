@@ -4,8 +4,8 @@ set -ex
 version="4.10.0"
 folder="workspace"
 
-echo "** Remove other OpenCV first"
-apt -y purge *libopencv*
+# echo "** Remove other OpenCV first"
+# apt -y purge *libopencv*
 
 echo "------------------------------------"
 echo "** Install requirement (1/4)"
@@ -46,4 +46,7 @@ echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >>
 source ~/.bashrc
 
 echo "Verify installed version"
-python3 -c "import cv2; print('OpenCV version:', str(cv2.__version__)); print(cv2.getBuildInformation())"
+python3 -c "import cv2; print(cv2.cuda.getCudaEnabledDeviceCount())"
+
+apt-get clean 
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

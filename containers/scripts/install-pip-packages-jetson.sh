@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-echo 'installing CUDA supported python packages'
+echo 'Installing CUDA supported python packages'
 
 export PIP_DEFAULT_TIMEOUT=100
 
@@ -17,22 +17,27 @@ echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-12.2/lib64' >> ~/.
 # echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc
 
 wget http://jetson.webredirect.org/jp6/cu122/+f/8c0/114b6c62bfa3d/torchvision-0.19.0a0+48b1edf-cp310-cp310-linux_aarch64.whl#sha256=8c0114b6c62bfa3d60d08b51f1467e0ea1ee4916e5b4b1084db50c2c1f345d93
-
 pip3 install --trusted-host jetson.webredirect.org --verbose \
     torch --index-url http://jetson.webredirect.org/jp6/cu122 \
-    torchvision-0.19.0a0+48b1edf-cp310-cp310-linux_aarch64.whl \
+    torchvision-0.19.0a0+48b1edf-cp310-cp310-linux_aarch64.whl
+
+pip3 install --no-cache-dir --verbose \
     numpy \
     scipy \
     scikit-learn \
     matplotlib \
-    onnx \
+    onnx
+
+pip3 install --trusted-host jetson.webredirect.org --verbose \
     onnxruntime-gpu --index-url http://jetson.webredirect.org/jp6/cu122 \
-    ultralytics \
     cupy --index-url http://jetson.webredirect.org/jp6/cu122 \
-    pycuda --index-url http://jetson.webredirect.org/jp6/cu122 \
-    argparse \
+    pycuda --index-url http://jetson.webredirect.org/jp6/cu122
+
+pip3 install --no-cache-dir --verbose \
+    ultralytics \
     flask \
-    tqdm
+    tqdm \
+    argparse
 
 apt-get update && apt-get upgrade -y
 apt-get clean
