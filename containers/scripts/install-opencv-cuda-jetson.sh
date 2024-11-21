@@ -4,9 +4,6 @@ set -ex
 version="4.10.0"
 folder="workspace"
 
-# echo "** Remove other OpenCV first"
-# apt -y purge *libopencv*
-
 echo "------------------------------------"
 echo "** Install requirement (1/4)"
 echo "------------------------------------"
@@ -20,6 +17,7 @@ apt-get install -y curl
 echo "------------------------------------"
 echo "** Download opencv "${version}" (2/4)"
 echo "------------------------------------"
+cd /tmp/
 mkdir $folder
 cd ${folder}
 curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip

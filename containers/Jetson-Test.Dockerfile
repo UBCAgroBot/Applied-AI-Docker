@@ -9,6 +9,7 @@ RUN dos2unix /scripts/*.sh && chmod +x /scripts/*.sh
 RUN /scripts/install-build-essential.sh
 RUN /scripts/install-cmake.sh
 RUN /scripts/install-ros2.sh
+RUN /scripts/install-zed-sdk-jetson.sh
 
 ENV PYTHONPATH="/usr/local/lib/python3.10/dist-packages"
 ENV LANG=en_US.UTF-8
