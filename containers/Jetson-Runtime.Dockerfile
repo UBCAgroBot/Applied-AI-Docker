@@ -1,6 +1,6 @@
 # FROM nvcr.io/nvidia/l4t-tensorrt:r10.3.0-runtime
 # FROM nvcr.io/nvidia/l4t-tensorrt:r10.3.0-devel
-FROM nvcr.io/nvidia/l4t-jetpack:r36.4.0 AS base
+FROM nvcr.io/nvidia/l4t-jetpack:r36.3.0 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY ./scripts /scripts
