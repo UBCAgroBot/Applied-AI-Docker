@@ -16,9 +16,11 @@ echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-12.2/lib64' >> ~/.
 # echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
 # echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc
 
+wget http://jetson.webredirect.org/jp6/cu122/+f/8c0/114b6c62bfa3d/torchvision-0.19.0a0+48b1edf-cp310-cp310-linux_aarch64.whl#sha256=8c0114b6c62bfa3d60d08b51f1467e0ea1ee4916e5b4b1084db50c2c1f345d93
+
 pip3 install --trusted-host jetson.webredirect.org --verbose \
     torch --index-url http://jetson.webredirect.org/jp6/cu122 \
-    torchvision --index-url http://jetson.webredirect.org/jp6/cu122 \
+    torchvision-0.19.0a0+48b1edf-cp310-cp310-linux_aarch64.whl \
     numpy \
     scipy \
     scikit-learn \

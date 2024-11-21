@@ -12,7 +12,7 @@ apt-get install -y --no-install-recommends \
 	lsb-release \
 	ca-certificates \
 	locales \
-	software-properties-common \
+	software-properties-common
 
 add-apt-repository universe
 apt-get update

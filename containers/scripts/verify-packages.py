@@ -171,7 +171,7 @@ def test_pyzed():
 def check_ros2():
     try:
         # Source ROS 2 setup script
-        ros2_setup_script = "/opt/ros/foxy/setup.bash"  # Update if necessary
+        ros2_setup_script = "/opt/ros/humble/setup.bash"  # Update if necessary
         if not os.path.exists(ros2_setup_script):
             print("ROS 2 setup script not found. Please verify the installation path.")
             return
