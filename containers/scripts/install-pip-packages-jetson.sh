@@ -7,7 +7,8 @@ export PIP_DEFAULT_TIMEOUT=100
 
 python3 -m pip install --upgrade pip
 
-apt-get install -y --no-install-recommends libboost-all-dev
+pip3 install --no-cache-dir --verbose --ignore-installed blinker
+
 echo 'export CPATH=$CPATH:/usr/local/cuda-12.2/targets/aarch64-linux/include' >> ~/.bashrc
 echo 'export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda-12.2/targets/aarch64-linux/lib' >> ~/.bashrc
 echo 'export PATH=$PATH:/usr/local/cuda-12.2/bin' >> ~/.bashrc
