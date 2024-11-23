@@ -31,3 +31,5 @@
 }
 
 // xhost +si:localuser:root (before running)
+// ssh -X -p 2222 root@localhost (after running)
+// ask chatgpt how to enable display forwarding for diff users same server
