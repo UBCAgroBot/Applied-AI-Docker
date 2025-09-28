@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY ./scripts /scripts
 RUN apt-get update && apt-get install -y dos2unix
 
-RUN dos2unix /scripts/*.sh
+RUN dos2unix /scripts/*.sh && chmod +x /scripts/*.sh
 RUN /scripts/install-build-essential.sh
 RUN /scripts/install-cmake.sh
 RUN /scripts/install-ros2.sh
