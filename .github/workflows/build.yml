@@ -51,9 +51,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: get ouput out
-        run: echo 'versioning_output ${{ needs.versioning.outputs.version }}'
-
       - name: Build and Push AMD64
         uses: docker/build-push-action@v6
         with:
@@ -118,12 +115,8 @@ jobs:
           VERSION=${{ needs.versioning.outputs.version }}
 
           for TAG in $VERSION latest; do
-            docker manifest create $IMAGE:$TAG \
-              --amend $IMAGE:amd64-$TAG \
-              --amend $IMAGE:arm64-$TAG
-
-            docker manifest annotate $IMAGE:$TAG $IMAGE:amd64-$TAG --arch amd64
-            docker manifest annotate $IMAGE:$TAG $IMAGE:arm64-$TAG --arch arm64
-
-            docker manifest push $IMAGE:$TAG
+            docker buildx imagetools create --tag $IMAGE:$TAG \
+              $IMAGE:amd64-$TAG \
+              $IMAGE:arm64-$TAG
+            docker buildx imagetools inspect $IMAGE:$TAG --raw || true
           done
