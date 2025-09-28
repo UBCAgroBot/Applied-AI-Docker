@@ -58,6 +58,8 @@ jobs:
           file: ./containers/${{ matrix.dockerfile }}
           push: true
           platforms: linux/amd64
+          cache-from: type=gha,scope=amd64-${{ matrix.image }}
+          cache-to: type=gha,scope=amd64-${{ matrix.image }},mode=max
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-latest
@@ -85,6 +87,8 @@ jobs:
           file: ./containers/${{ matrix.dockerfile }}
           push: true
           platforms: linux/arm64
+          cache-from: type=gha,scope=arm64-${{ matrix.image }}
+          cache-to: type=gha,scope=arm64-${{ matrix.image }},mode=max
           tags: |
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}
             ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-latest

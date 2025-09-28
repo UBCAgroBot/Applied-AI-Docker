@@ -2,7 +2,7 @@
 
 ## Building:
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ ros-containers:latest -f ROS-Dev.Dockerfile . --network=host --push
+docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ros-containers:latest -f ROS-Dev.Dockerfile . --network=host --push
 ```
 
 ## Running the container

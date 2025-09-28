@@ -12,19 +12,18 @@ RUN /scripts/install-ros2.sh
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME --shell /bin/bash \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
-
 RUN usermod -aG dialout ${USERNAME}
-
 USER $USERNAME
-ENV LANG=en_US.UTF-8
 
+ENV LANG=en_US.UTF-8
+ENV PYTHONWARNINGS="ignore"
 RUN mkdir -p /home/$USERNAME/workspace
 WORKDIR /home/$USERNAME/workspace
 ENV LANG=en_US.UTF-8
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 ENTRYPOINT ["/bin/bash"]
