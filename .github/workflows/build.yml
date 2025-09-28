@@ -13,7 +13,7 @@ jobs:
   versioning:
     runs-on: ubuntu-latest
     outputs:
-      tags: ${{ steps.tag.outputs.new_tag }}
+      version: ${{ steps.tag.outputs.new_tag }}
     steps:
       - name: Bump Tag Version
         id: tag
