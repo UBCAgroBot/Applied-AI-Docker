@@ -128,8 +128,9 @@ jobs:
           name: Release ${{ needs.versioning.outputs.version }}
           body: |
             Docker images:
-            - multi-arch: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:${{ needs.versioning.outputs.version }}
-            - amd64: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}
-            - arm64: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}
+
+            - multi-arch: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=${{ needs.versioning.outputs.version }})
+            - amd64: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=amd64-${{ needs.versioning.outputs.version }})
+            - arm64: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=arm64-${{ needs.versioning.outputs.version }})
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
