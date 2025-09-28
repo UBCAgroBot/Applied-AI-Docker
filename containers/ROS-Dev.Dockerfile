@@ -21,10 +21,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 RUN usermod -aG dialout ${USERNAME}
 
 USER $USERNAME
-RUN python3 -m pip install --upgrade pip
-RUN pip3 install --no-cache-dir --verbose flask tqdm requests opencv-python
-
-ENV PYTHONPATH="/usr/local/lib/python3.10/dist-packages"
 ENV LANG=en_US.UTF-8
 
 RUN mkdir -p /home/$USERNAME/workspace

@@ -1,0 +1,119 @@
+name: Docker Container Builds
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  DOCKER_NAMESPACE: agrobotappliedai
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.tag.outputs.new_tag }}
+    steps:
+      - name: Bump Tag Version
+        id: tag
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: major
+
+  build-amd64:
+    runs-on: ubuntu-latest
+    needs: versioning
+    strategy:
+      matrix:
+        include: &dockerfiles
+          # - dockerfile: Jetson-Dev.Dockerfile
+          #   image: jetsoncontainers-dev
+          # - dockerfile: ML-CPU.Dockerfile
+          #   image: mlcontainers-cpu
+          # - dockerfile: ML-GPU.Dockerfile
+          #   image: mlcontainers-gpu
+          - dockerfile: ROS-Dev.Dockerfile
+            image: ros-containers
+          # - dockerfile: Zed-Dev.Dockerfile
+          #   image: zed-containers
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+  
+      - name: Build and Push AMD64
+        uses: docker/build-push-action@v6
+        with:
+          context: ./containers
+          file: ./containers/${{ matrix.dockerfile }}
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-latest
+
+  build-arm64:
+    runs-on: ubuntu-22.04-arm # [self-hosted, linux, arm64]
+    needs: versioning
+    strategy:
+      matrix:
+        include: *dockerfiles
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push ARM64
+        uses: docker/build-push-action@v6
+        with:
+          context: ./containers
+          file: ./containers/${{ matrix.dockerfile }}
+          push: true
+          platforms: linux/arm64
+          tags: |
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-latest
+
+  manifest:
+    needs: [versioning, build-amd64, build-arm64]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: *dockerfiles 
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create and push manifest + version tag
+        run: |
+          IMAGE=${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}
+          VERSION=${{ needs.versioning.outputs.version }}
+
+          for TAG in $VERSION latest; do
+            docker manifest create $IMAGE:$TAG \
+              --amend $IMAGE:amd64-$TAG \
+              --amend $IMAGE:arm64-$TAG
+
+            docker manifest annotate $IMAGE:$TAG $IMAGE:amd64-$TAG --arch amd64
+            docker manifest annotate $IMAGE:$TAG $IMAGE:arm64-$TAG --arch arm64
+
+            docker manifest push $IMAGE:$TAG
+          done

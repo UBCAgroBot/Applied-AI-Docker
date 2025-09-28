@@ -1,33 +1,11 @@
 # Agrobot Container Repository
 
-This repository contains the Dockerfile and the necessary files to build the Agrobot container.
-
-
-## Building the container
-
-To build the container, you need to have Docker installed on your machine. You can download Docker from [here](https://www.docker.com/products/docker-desktop).
-
-Once you have Docker installed, you can build the container by running the following command:
-
+## Building:
 ```bash
-docker build -t agrobot .
+docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ ros-containers:latest -f ROS-Dev.Dockerfile . --network=host --push
 ```
-
-This command will build the container and tag it with the name `agrobot`.
 
 ## Running the container
-
-To run the container, you can use the following command:
-
 ```bash
-docker run -it --rm agrobot
+docker run -it --rm --gpus all -v ~/Downloads:/home/usr/Downloads agrobotappliedai/ros-containers:latest --network=host
 ```
-
-This command will run the container in interactive mode and remove it once you exit the container.
-
-## Running the container with a volume
-
-(confluence guides)
-
-need to modify the scripts to add conditional arguments for diff results
-./desktop_build_dockerfile_from_sdk_ubuntu_and_cuda_version.sh <Ubuntu version> <CUDA version> <ZED SDK version>
