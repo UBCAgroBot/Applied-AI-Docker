@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: get ouput out
-        run: echo 'versioning_output $ {{ needs.versioning.outputs.version }}'
+        run: echo 'versioning_output ${{ needs.versioning.outputs.version }}'
 
       - name: Build and Push AMD64
         uses: docker/build-push-action@v6
