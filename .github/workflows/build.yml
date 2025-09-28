@@ -120,3 +120,16 @@ jobs:
               $IMAGE:arm64-$TAG
             docker buildx imagetools inspect $IMAGE:$TAG --raw || true
           done
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.versioning.outputs.version }}
+          name: Release ${{ needs.versioning.outputs.version }}
+          body: |
+            Docker images:
+            - multi-arch: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:${{ needs.versioning.outputs.version }}
+            - amd64: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}
+            - arm64: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
