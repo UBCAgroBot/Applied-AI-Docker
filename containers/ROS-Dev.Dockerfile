@@ -19,11 +19,15 @@ RUN groupadd --gid $USER_GID $USERNAME \
 RUN usermod -aG dialout ${USERNAME}
 USER $USERNAME
 
-ENV LANG=en_US.UTF-8
-ENV PYTHONWARNINGS="ignore"
 RUN mkdir -p /home/$USERNAME/workspace
+WORKDIR /home/$USERNAME
+
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+RUN /scripts/install-rslidar-sdk.sh
+RUN echo "source /home/$USERNAME/rslidar_build/install/setup.bash" >> ~/.bashrc
+
 WORKDIR /home/$USERNAME/workspace
 ENV LANG=en_US.UTF-8
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+ENV PYTHONWARNINGS="ignore"
 
 ENTRYPOINT ["/bin/bash"]
