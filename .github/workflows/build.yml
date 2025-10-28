@@ -36,8 +36,8 @@ jobs:
           #   image: mlcontainers-gpu
           - dockerfile: ROS-Dev.Dockerfile
             image: ros-containers
-          # - dockerfile: GST-Dev.Dockerfile
-          #   image: gst-containers
+          - dockerfile: GST-Dev.Dockerfile
+            image: gst-containers
           # - dockerfile: Zed-Dev.Dockerfile
           #   image: zed-containers
     steps:

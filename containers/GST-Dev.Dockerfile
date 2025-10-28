@@ -21,6 +21,7 @@ USER $USERNAME
 
 RUN mkdir -p /home/$USERNAME/workspace
 WORKDIR /home/$USERNAME/workspace
+
 ENV LANG=en_US.UTF-8
 ENV PYTHONWARNINGS="ignore"
 

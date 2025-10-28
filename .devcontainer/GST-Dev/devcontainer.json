@@ -9,10 +9,7 @@
     },
     "workspaceFolder": "/home/vscode/workspace",
     "workspaceMount": "source=.,target=/home/vscode/workspace,type=bind,consistency=cached",
-    // "mounts": [
-    //     "source=/home/user/.Xauthority,target=/root/.Xauthority,type=bind",
-    //     "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
-    // ],
+    "mounts": [],
     "runArgs": [
         "--net=host",
         "-it",
