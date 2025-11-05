@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-set -ex
+set -euox pipefail
 
 echo 'installing ZED SDK'
+
+ZED_URL="${1:-https://download.stereolabs.com/zedsdk/4.2/cu12/ubuntu22}"
+echo "Using ZED SDK URL: $ZED_URL"
 
 apt-get update -y && apt-get install -y --no-install-recommends \
     lsb-release \
@@ -11,7 +14,7 @@ apt-get update -y && apt-get install -y --no-install-recommends \
     udev \
     apt-transport-https
 
-wget --no-check-certificate -O ZED_SDK_Linux.run https://download.stereolabs.com/zedsdk/4.2/cu12/ubuntu22
+wget -q --no-check-certificate -O ZED_SDK_Linux.run "$ZED_URL"
 chmod +x ZED_SDK_Linux.run
 ./ZED_SDK_Linux.run -- silent skip_cuda skip_od_module
 rm -rf /usr/local/zed/resources/* 

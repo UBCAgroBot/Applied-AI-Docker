@@ -1,0 +1,41 @@
+{
+    "name": "gstreamer-pipeline",
+    "image": "attempt:latest", // change
+    "workspaceFolder": "/gstreamer-pipeline-testing", // change
+    "workspaceMount": "source=${localWorkspaceFolder},target=/gstreamer-pipeline-testing,type=bind", // change
+    "runArgs": [
+        "--privileged",
+        "--network=host",
+        "--runtime=nvidia",
+        "--ipc=host",
+        "--device=/dev/dri",
+        "--device=/dev/nvmap",
+        "--device=/dev/nvhost-ctrl-gpu",
+        "--device=/dev/nvhost-prof-gpu",
+        "--device=/dev/nvhost-gpu",
+        "--device=/dev/nvhost-as-gpu"
+    ],
+    "mounts": [
+        "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly",
+        "source=,target=/root/.ssh,type=tmpfs"
+    ],
+    "postCreateCommand": "cp -r /tmp/host-ssh/* /root/.ssh/ && chmod 600 /root/.ssh/* && chmod 700 /root/.ssh",
+    "containerEnv": {
+        "NVIDIA_VISIBLE_DEVICES": "all",
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,video,graphics,utility",
+        "EGL_PLATFORM": "surfaceless",
+        "GST_GL_PLATFORM": "egl",
+        "GST_GL_WINDOW": "surfaceless",
+        "DISPLAY": "",
+        "WAYLAND_DISPLAY": "",
+        "XAUTHORITY": "",
+        "REMOTE_CONTAINERS_DISPLAY_SOCK": ""
+    },
+    "remoteEnv": {
+        "DISPLAY": "",
+        "WAYLAND_DISPLAY": "",
+        "XAUTHORITY": "",
+        "REMOTE_CONTAINERS_DISPLAY_SOCK": ""
+    },
+    "remoteUser": "root"
+}

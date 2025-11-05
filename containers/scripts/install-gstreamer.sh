@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -euox pipefail
 
 echo 'installing gstreamer'
 
