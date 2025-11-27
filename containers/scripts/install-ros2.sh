@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euox pipefail
+set -eox pipefail
 
 echo 'installing ros2'
 
