@@ -1,5 +1,5 @@
 {
-    "name": "Jetson Development Container",
+    "name": "Jetson Dev Container",
     "remoteUser": "root",
     "image": "agrobotappliedai/jetsoncontainers-dev:latest",
     "customizations":{
@@ -20,5 +20,5 @@
         "--ulimit=stack=67108864",
         "--privileged"
     ],
-    "postStartCommand": "bash -c 'sudo apt update && sudo apt upgrade -y'"
+    "updateRemoteUserUID": false
 }

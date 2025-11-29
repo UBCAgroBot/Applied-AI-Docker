@@ -9,12 +9,12 @@
     },
     "workspaceFolder": "/home/vscode/workspace",
     "workspaceMount": "source=.,target=/home/vscode/workspace,type=bind,consistency=cached",
+    "updateRemoteUserUID": false,
     "mounts": [],
     "runArgs": [
         "--net=host",
         "-it",
         "--rm",
         "--privileged"
-    ],
-    "postStartCommand": "bash -c 'sudo apt update && sudo apt upgrade -y && rosdep update'"
+    ]
 }

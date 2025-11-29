@@ -16,5 +16,5 @@
         "--rm",
         "--privileged"
     ],
-    "postStartCommand": "bash -c 'sudo apt update && sudo apt upgrade -y'"
+    "updateRemoteUserUID": false
 }

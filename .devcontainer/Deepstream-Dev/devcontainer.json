@@ -1,7 +1,7 @@
 {
-    "name": "gstreamer-pipeline",
-    "image": "attempt:latest", // change
-    "workspaceFolder": "/gstreamer-pipeline-testing", // change
+    "name": "Deepstream Dev Container",
+    "image": "agrobotappliedai/deepstream-dev:latest",
+    "workspaceFolder": "/home/vscode/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/gstreamer-pipeline-testing,type=bind", // change
     "runArgs": [
         "--privileged",
@@ -15,11 +15,7 @@
         "--device=/dev/nvhost-gpu",
         "--device=/dev/nvhost-as-gpu"
     ],
-    "mounts": [
-        "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly",
-        "source=,target=/root/.ssh,type=tmpfs"
-    ],
-    "postCreateCommand": "cp -r /tmp/host-ssh/* /root/.ssh/ && chmod 600 /root/.ssh/* && chmod 700 /root/.ssh",
+    "mounts": [],
     "containerEnv": {
         "NVIDIA_VISIBLE_DEVICES": "all",
         "NVIDIA_DRIVER_CAPABILITIES": "compute,video,graphics,utility",

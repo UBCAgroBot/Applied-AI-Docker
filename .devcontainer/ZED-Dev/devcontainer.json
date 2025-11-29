@@ -9,6 +9,7 @@
     },
     "workspaceFolder": "/home/user/workspace",
     "workspaceMount": "source=.,target=/home/user/workspace,type=bind,consistency=cached",
+    "updateRemoteUserUID": false,
     // "mounts": [
     //     "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
     //     // "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
@@ -27,6 +28,5 @@
         "--gpus=all",
         "--env=NVIDIA_DRIVER_CAPABILITIES=video,compute,utility",
         "--env=${env:DISPLAY}"
-    ],
-    "postStartCommand": "bash -c 'source /opt/ros/humble/setup.bash'"
+    ]
 }
