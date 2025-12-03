@@ -4,8 +4,8 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all,compute,video,graphics,utility
 
 RUN apt update
-
-RUN apt install -y --no-install-recommends ca-certificates curl build-essential pkg-config libssl-dev libxtensor-dev plocate libeigen3-dev libgtest-dev && rm -rf /var/lib/apt/lists/*
+RUN apt install -y --no-install-recommends ca-certificates curl build-essential pkg-config libssl-dev libxtensor-dev plocate libeigen3-dev libgtest-dev
+RUN apt install -y gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-plugins-good libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCV
 RUN apt update && apt install -y cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libtbb2 
