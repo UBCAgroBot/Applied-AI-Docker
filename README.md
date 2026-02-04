@@ -1,8 +1,13 @@
 # Agrobot Container Repository
 
-## Building:
+## Multi-Platform Builds:
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ros-containers:latest -f ROS-Dev.Dockerfile . --network=host --push
+docker run --privileged --rm tonistiigi/binfmt --install all
+docker buildx create --name multiarch --driver docker-container --use
+docker buildx inspect --bootstrap
+
+docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/webdev-containers:latest --network=host --push .
+docker buildx build --platform linux/amd64 -t agrobotappliedai/webdev-containers:latest --network=host --load .
 ```
 
 ## Running the container
@@ -10,8 +15,3 @@ docker buildx build --platform linux/amd64,linux/arm64 -t agrobotappliedai/ros-c
 docker run -it --rm --gpus all -v ~/Downloads:/home/usr/Downloads agrobotappliedai/ros-containers:latest --network=host 
 ``` 
 
-## Jetson Power:
-```bash
-sudo jetson-clocks
-sudo nvpmodel -m 0
-```
