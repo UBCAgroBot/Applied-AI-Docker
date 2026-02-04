@@ -10,10 +10,12 @@ env:
   DOCKER_NAMESPACE: agrobotappliedai
 
 jobs:
-  versioning:
-    runs-on: ubuntu-latest
+  setup:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     outputs:
-      version: ${{ steps.tag.outputs.new_tag }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      release_version: ${{ steps.tag.outputs.new_tag }}
+      versions: ${{ steps.versions.outputs.versions }}
     steps:
       - name: Bump Tag Version
         id: tag
@@ -22,28 +24,74 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: major
 
-  build-amd64:
-    runs-on: ubuntu-latest
-    needs: versioning
+      - name: Define container matrix
+        id: set-matrix
+        run: |
+          CONTAINERS='[
+            {"file": "ROS-Dev.Dockerfile", "image": "ros-containers"},
+            {"file": "GST-Dev.Dockerfile", "image": "gst-containers"},
+            {"file": "Web-Dev.Dockerfile", "image": "webdev-containers"}
+          ]'
+          # To add more containers, just add to the array above:
+          # {"file": "Jetson-Dev.Dockerfile", "image": "jetsoncontainers-dev"},
+          # {"file": "ML-CPU.Dockerfile", "image": "mlcontainers-cpu"},
+          # {"file": "ML-GPU.Dockerfile", "image": "mlcontainers-gpu"},
+          # {"file": "Zed-Dev.Dockerfile", "image": "zed-containers"}
+          
+          echo "matrix=$(echo $CONTAINERS | jq -c .)" >> $GITHUB_OUTPUT
+
+      - name: Get next version for each image
+        id: versions
+        run: |
+          get_next_version() {
+            local image=$1
+            local full_image="${{ env.DOCKER_NAMESPACE }}/${image}"
+            
+            # Query Docker Hub API for tags
+            response=$(curl -s "https://hub.docker.com/v2/repositories/${full_image}/tags?page_size=100" || echo '{"results":[]}')
+            
+            # Extract version tags (format: vX.Y.Z), get the highest one
+            latest_version=$(echo "$response" | jq -r '.results[].name' 2>/dev/null | \
+              grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | \
+              sort -V | tail -n1)
+            
+            if [ -z "$latest_version" ] || [ "$latest_version" = "null" ]; then
+              echo "v1.0.0"
+            else
+              major=$(echo "$latest_version" | sed 's/v\([0-9]*\)\..*/\1/')
+              echo "v$((major + 1)).0.0"
+            fi
+          }
+
+          # Read matrix and build versions JSON object
+          MATRIX='${{ steps.set-matrix.outputs.matrix }}'
+          VERSIONS="{}"
+          
+          for image in $(echo "$MATRIX" | jq -r '.[].image'); do
+            version=$(get_next_version "$image")
+            VERSIONS=$(echo "$VERSIONS" | jq --arg img "$image" --arg ver "$version" '. + {($img): $ver}')
+          done
+          
+          echo "versions=$(echo $VERSIONS | jq -c .)" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ${{ matrix.platform == 'amd64' && 'blacksmith-2vcpu-ubuntu-2404' || 'blacksmith-2vcpu-ubuntu-2404-arm' }}
+    needs: setup
     strategy:
       matrix:
-        include: &dockerfiles
-          # - dockerfile: Jetson-Dev.Dockerfile
-          #   image: jetsoncontainers-dev
-          # - dockerfile: ML-CPU.Dockerfile
-          #   image: mlcontainers-cpu
-          # - dockerfile: ML-GPU.Dockerfile
-          #   image: mlcontainers-gpu
-          - dockerfile: ROS-Dev.Dockerfile
-            image: ros-containers
-          - dockerfile: GST-Dev.Dockerfile
-            image: gst-containers
-          # - dockerfile: Zed-Dev.Dockerfile
-          #   image: zed-containers
+        platform: [amd64, arm64]
+        dockerfile: ${{ fromJson(needs.setup.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set image version
+        id: image_version
+        run: |
+          VERSIONS='${{ needs.setup.outputs.versions }}'
+          VERSION=$(echo "$VERSIONS" | jq -r '."${{ matrix.dockerfile.image }}"')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -53,86 +101,86 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push AMD64
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./containers
-          file: ./containers/${{ matrix.dockerfile }}
+          file: ./containers/${{ matrix.dockerfile.file }}
           push: true
-          platforms: linux/amd64
-          cache-from: type=gha,scope=amd64-${{ matrix.image }}
-          cache-to: type=gha,scope=amd64-${{ matrix.image }},mode=max
+          platforms: linux/${{ matrix.platform }}
+          cache-from: type=gha,scope=${{ matrix.platform }}-${{ matrix.dockerfile.image }}
+          cache-to: type=gha,scope=${{ matrix.platform }}-${{ matrix.dockerfile.image }},mode=max
           tags: |
-            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}
-            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-latest
-
-  build-arm64:
-    runs-on: ubuntu-22.04-arm # [self-hosted, linux, arm64]
-    needs: versioning
-    strategy:
-      matrix:
-        include: *dockerfiles
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and Push ARM64
-        uses: docker/build-push-action@v6
-        with:
-          context: ./containers
-          file: ./containers/${{ matrix.dockerfile }}
-          push: true
-          platforms: linux/arm64
-          cache-from: type=gha,scope=arm64-${{ matrix.image }}
-          cache-to: type=gha,scope=arm64-${{ matrix.image }},mode=max
-          tags: |
-            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}
-            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-latest
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.dockerfile.image }}:${{ matrix.platform }}-${{ steps.image_version.outputs.version }}
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.dockerfile.image }}:${{ matrix.platform }}-latest
 
   manifest:
-    needs: [versioning, build-amd64, build-arm64]
-    runs-on: ubuntu-latest
+    needs: [setup, build]
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     strategy:
       matrix:
-        include: *dockerfiles 
+        dockerfile: ${{ fromJson(needs.setup.outputs.matrix) }}
     steps:
+      - name: Set image version
+        id: image_version
+        run: |
+          VERSIONS='${{ needs.setup.outputs.versions }}'
+          VERSION=$(echo "$VERSIONS" | jq -r '."${{ matrix.dockerfile.image }}"')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Create and push manifest + version tag
+      - name: Create and push multi-arch manifest
         run: |
-          IMAGE=${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}
-          VERSION=${{ needs.versioning.outputs.version }}
+          IMAGE=${{ env.DOCKER_NAMESPACE }}/${{ matrix.dockerfile.image }}
+          VERSION=${{ steps.image_version.outputs.version }}
 
-          for TAG in $VERSION latest; do
-            docker buildx imagetools create --tag $IMAGE:$TAG \
-              $IMAGE:amd64-$TAG \
-              $IMAGE:arm64-$TAG
-            docker buildx imagetools inspect $IMAGE:$TAG --raw || true
+          # Use buildx imagetools which handles manifest lists correctly
+          docker buildx imagetools create -t $IMAGE:$VERSION \
+            $IMAGE:amd64-$VERSION \
+            $IMAGE:arm64-$VERSION
+
+          docker buildx imagetools create -t $IMAGE:latest \
+            $IMAGE:amd64-latest \
+            $IMAGE:arm64-latest
+
+  release:
+    needs: [setup, manifest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate release body
+        id: release_body
+        run: |
+          MATRIX='${{ needs.setup.outputs.matrix }}'
+          VERSIONS='${{ needs.setup.outputs.versions }}'
+          NAMESPACE="${{ env.DOCKER_NAMESPACE }}"
+          
+          BODY="## Docker Images"$'\n\n'
+          
+          for image in $(echo "$MATRIX" | jq -r '.[].image'); do
+            version=$(echo "$VERSIONS" | jq -r ".\"$image\"")
+            BODY+="### $image"$'\n'
+            BODY+="- Version: \`$version\`"$'\n'
+            BODY+="- multi-arch: [$NAMESPACE/$image:$version](https://hub.docker.com/r/$NAMESPACE/$image/tags?name=$version)"$'\n\n'
           done
-      
+          
+          # Use delimiter for multiline output
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.versioning.outputs.version }}
-          name: Release ${{ needs.versioning.outputs.version }}
-          body: |
-            Docker images:
-
-            - multi-arch: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=${{ needs.versioning.outputs.version }})
-            - amd64: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:amd64-${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=amd64-${{ needs.versioning.outputs.version }})
-            - arm64: [${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}:arm64-${{ needs.versioning.outputs.version }}](https://hub.docker.com/r/${{ env.DOCKER_NAMESPACE }}/${{ matrix.image }}/tags?name=arm64-${{ needs.versioning.outputs.version }})
+          tag_name: ${{ needs.setup.outputs.release_version }}
+          name: Release ${{ needs.setup.outputs.release_version }}
+          body: ${{ steps.release_body.outputs.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
